@@ -8,12 +8,17 @@ environment:
   sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
-  camera: ^0.7.0+1
+  camera:
+    git:
+      url: https://github.com/duannl/plugins.git
+      ref: feature/fix-front-camera-mirror
+      path: packages/camera/camera/
   native_device_orientation: ^0.4.3
   path_provider: ^1.6.27
   rxdart: ^0.25.0
   video_player: ^1.0.1
   wakelock: ^0.2.1+1
+  image: ^2.1.19
   flutter:
     sdk: flutter
 

@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:camera_camera/camera_camera.dart';
 import 'package:flutter/material.dart';
+import 'package:camera/camera.dart';
+import 'package:image/image.dart' as img;
 
 void main() => runApp(MyApp());
 
@@ -26,6 +28,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   File val;
+  var _cameraDirection = CameraLensDirection.front;
 
   @override
   Widget build(BuildContext context) {
@@ -34,14 +37,15 @@ class _HomeScreenState extends State<HomeScreen> {
         floatingActionButton: FloatingActionButton(
             child: Icon(Icons.camera_alt),
             onPressed: () async {
-              val = await showDialog(
+              final file = await showDialog(
                   context: context,
                   builder: (context) => Camera(
                         mode: CameraMode.fullscreen,
-                        //initialCamera: CameraSide.front,
-                        //enableCameraChange: false,
-                        //  orientationEnablePhoto: CameraOrientation.landscape,
+                        initialCamera: _cameraDirection == CameraLensDirection.front ? CameraSide.front : CameraSide.back,
+                        enableCameraChange: true,
+                        orientationEnablePhoto: CameraOrientation.portrait,
                         onChangeCamera: (direction, _) {
+                          _cameraDirection = direction;
                           print('--------------');
                           print('$direction');
                           print('--------------');
@@ -51,6 +55,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         //   color: Colors.black.withOpacity(0.5),
                         // ),
                       ));
+              if (_cameraDirection == CameraLensDirection.front && file != null) {
+                val = await _bakeOrientation(file: file);
+              } else {
+                val = file;
+              }
+              
               setState(() {});
             }),
         body: Center(
@@ -63,5 +73,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         fit: BoxFit.contain,
                       )
                     : Text("Tire a foto"))));
+  }
+
+  // to make sure orientation is correct
+  // https://stackoverflow.com/a/62807277/2721547
+  Future<File> _bakeOrientation({File file}) async {
+    img.Image capturedImage = img.decodeImage(await file.readAsBytes());
+    img.Image orientedImage = img.bakeOrientation(capturedImage);
+    return File(file.path).writeAsBytes(img.encodeJpg(orientedImage));
   }
 }

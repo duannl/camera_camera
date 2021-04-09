@@ -56,6 +56,8 @@ class _CameraState extends State<Camera> {
       bloc.controllCamera = CameraController(
         data[0],
         ResolutionPreset.high,
+        enableAudio: false,
+        imageFormatGroup: ImageFormatGroup.jpeg
       );
       bloc.cameraOn.sink.add(0);
       bloc.controllCamera.initialize().then((_) {
@@ -169,7 +171,7 @@ class _CameraState extends State<Camera> {
                             orientation: orientation,
                             child: SizedBox(
                               height: sizeImage.height,
-                              width: sizeImage.height,
+                              width: sizeImage.width,
                               child: Image.file(snapshot.data,
                                   fit: BoxFit.contain),
                             ),
@@ -277,8 +279,11 @@ class _CameraState extends State<Camera> {
                                         child: IconButton(
                                           icon: OrientationWidget(
                                             orientation: orientation,
-                                            child: Icon(Icons.arrow_back_ios,
-                                                color: Colors.white),
+                                            child: Padding(
+                                              padding: EdgeInsets.only(right: 4),
+                                              child: Icon(Icons.arrow_back_ios_rounded,
+                                                  color: Colors.white),
+                                            ),
                                           ),
                                           onPressed: () {
                                             Navigator.pop(context);
