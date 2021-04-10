@@ -23,6 +23,7 @@ class Camera extends StatefulWidget {
   final CameraSide initialCamera;
   final Function(CameraLensDirection direction, List<CameraDescription> cameras)
       onChangeCamera;
+  final Function onErrorPermission;
 
   const Camera({
     Key key,
@@ -32,6 +33,7 @@ class Camera extends StatefulWidget {
     this.onFile,
     this.warning,
     this.onChangeCamera,
+    this.onErrorPermission,
     this.initialCamera = CameraSide.back,
     this.enableCameraChange = true,
   }) : super(key: key);
@@ -63,6 +65,11 @@ class _CameraState extends State<Camera> {
       bloc.controllCamera.initialize().then((_) {
         bloc.selectCamera.sink.add(true);
         if (widget.initialCamera == CameraSide.front) bloc.changeCamera();
+      }).catchError((error) {
+        if (error.code == 'cameraPermission') {
+          widget.onErrorPermission?.call();
+        }
+        debugPrint('camera error: $error');
       });
     });
     SystemChrome.setEnabledSystemUIOverlays([]);

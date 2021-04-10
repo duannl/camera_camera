@@ -50,6 +50,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           print('$direction');
                           print('--------------');
                         },
+                        onErrorPermission: () {
+                          debugPrint('you dont have permission to access camera');
+                        },
 
                         // imageMask: CameraFocus.square(
                         //   color: Colors.black.withOpacity(0.5),
