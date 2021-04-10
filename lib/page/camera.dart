@@ -67,7 +67,6 @@ class _CameraState extends State<Camera> {
         if (widget.initialCamera == CameraSide.front) bloc.changeCamera();
       }).catchError((error) {
         if (error.code == 'cameraPermission') {
-          Navigator.of(context).pop();
           widget.onErrorPermission?.call();
         }
         debugPrint('camera error: $error');
